@@ -13,6 +13,10 @@ SDL_Renderer* setup() {
 }
 
 void draw(std::vector<int>& v,  SDL_Renderer* renderer, unsigned int red, unsigned int blue) {
+    // Clear the Screen
+    SDL_SetRenderDrawColor(renderer, 0,0,0,255);
+    SDL_RenderClear(renderer);
+
     int index = 0;
     for( int i : v) {
         if(index == red)
@@ -24,6 +28,9 @@ void draw(std::vector<int>& v,  SDL_Renderer* renderer, unsigned int red, unsign
         SDL_RenderDrawLine(renderer, index, 0, index, i );
         index += 1;
     }
+
+     // Update Window
+    SDL_RenderPresent(renderer);
 }
 
 void sort(std::vector<int>& v, SDL_Renderer* renderer) {
@@ -34,18 +41,10 @@ void sort(std::vector<int>& v, SDL_Renderer* renderer) {
             if(v[j] < v[i]) {
                 std::swap(v[j], v[i]);
             }
-
-            // Clear the Screen
-            SDL_SetRenderDrawColor(renderer, 0,0,0,255);
-            SDL_RenderClear(renderer);
-            
-
+     
             // Draw Sort
             draw(v, renderer, i, j);
 
-            // Update Window
-            SDL_RenderPresent(renderer);
-            
         }
     }
 }
