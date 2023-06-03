@@ -3,6 +3,15 @@
 #include <algorithm>
 #include <SDL2/SDL.h>
 
+
+SDL_Renderer* setup() {
+    SDL_Window* window = nullptr;
+    SDL_Renderer* renderer = nullptr;
+    SDL_CreateWindowAndRenderer(100*5, 100*5, 0, &window, &renderer);
+    SDL_RenderSetScale(renderer, 5 , 5);
+    return renderer;
+}
+
 void draw(std::vector<int>& v,  SDL_Renderer* renderer, unsigned int red, unsigned int blue) {
     int index = 0;
     for( int i : v) {
@@ -17,24 +26,8 @@ void draw(std::vector<int>& v,  SDL_Renderer* renderer, unsigned int red, unsign
     }
 }
 
-// int argc, char *argv[] - SDL required signatures - otherwise E: undefined reference to `SDL_main'
-int main( int argc, char *argv[] )
-{
-    std::random_device rd;
-    std::uniform_int_distribution<> distrib(1,99);
-    std::vector<int> v;
-
-    // Push random numbers into Vector
-    for(int i = 0; i < 100; i++) {
-        v.push_back(distrib(rd));
-    }
-
-    SDL_Window* window = nullptr;
-    SDL_Renderer* renderer = nullptr;
-    SDL_CreateWindowAndRenderer(100*5, 100*5, 0, &window, &renderer);
-    SDL_RenderSetScale(renderer, 5 , 5);
-    
-    // Loop through V, checking if later values are smaller 
+void sort(std::vector<int>& v, SDL_Renderer* renderer) {
+     // Loop through V, checking if later values are smaller 
     for(unsigned int i = 0; i < v.size(); i++) {
         for(unsigned int j = i; j < v.size(); j++)
         {
@@ -55,6 +48,25 @@ int main( int argc, char *argv[] )
             
         }
     }
+}
+
+
+// int argc, char *argv[] - SDL required signatures - otherwise E: undefined reference to `SDL_main'
+int main( int argc, char *argv[] )
+{
+
+    std::random_device rd;
+    std::uniform_int_distribution<> distrib(1,99);
+    std::vector<int> v;
+
+    // Push random numbers into Vector
+    for(int i = 0; i < 100; i++) {
+        v.push_back(distrib(rd));
+    }
+
+    SDL_Renderer* renderer = setup();
+    
+    sort(v, renderer);
 
     // Foreach loop to print out sorted values
     for(int i :v) {
@@ -65,4 +77,4 @@ int main( int argc, char *argv[] )
         std::cout << "Sorting finished!";
     }
 }
-
+ 
