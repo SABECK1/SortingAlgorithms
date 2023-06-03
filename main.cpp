@@ -2,7 +2,9 @@
 #include <random>
 #include <algorithm>
 #include <SDL2/SDL.h>
+#include <chrono>
 
+using namespace std::chrono;
 
 SDL_Renderer* setup() {
     SDL_Window* window = nullptr;
@@ -50,10 +52,7 @@ void sort(std::vector<int>& v, SDL_Renderer* renderer) {
 }
 
 
-// int argc, char *argv[] - SDL required signatures - otherwise E: undefined reference to `SDL_main'
-int main( int argc, char *argv[] )
-{
-
+std::vector<int> get_randomized_vector() {
     std::random_device rd;
     std::uniform_int_distribution<> distrib(1,99);
     std::vector<int> v;
@@ -62,10 +61,22 @@ int main( int argc, char *argv[] )
     for(int i = 0; i < 100; i++) {
         v.push_back(distrib(rd));
     }
+    return v;
+}
 
+// int argc, char *argv[] - SDL required signatures - otherwise E: undefined reference to `SDL_main'
+int main( int argc, char *argv[] )
+{
+
+    std::vector<int> v = get_randomized_vector();
     SDL_Renderer* renderer = setup();
     
+    auto t1 = high_resolution_clock::now();
     sort(v, renderer);
+    auto t2 = high_resolution_clock::now();
+    duration<double, std::milli> ms_double = t2 - t1;
+    
+
 
     // Foreach loop to print out sorted values
     for(int i :v) {
@@ -73,7 +84,8 @@ int main( int argc, char *argv[] )
     }
 
     if(std::is_sorted(v.begin(), v.end())) {
-        std::cout << "Sorting finished!";
+        std::cout << "Sorting finished!\n";
     }
+    std::cout << ms_double.count() << "ms\n";
 }
  
