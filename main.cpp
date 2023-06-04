@@ -6,15 +6,15 @@
 
 using namespace std::chrono;
 
-SDL_Renderer* setup() {
-    SDL_Window* window = nullptr;
-    SDL_Renderer* renderer = nullptr;
-    SDL_CreateWindowAndRenderer(100*5, 100*5, 0, &window, &renderer);
+SDL_Window* window= nullptr;
+SDL_Renderer* renderer=nullptr;
+
+void setup() {
+    SDL_CreateWindowAndRenderer(100*10, 100*10, 0, &window, &renderer);
     SDL_RenderSetScale(renderer, 5 , 5);
-    return renderer;
 }
 
-void draw(std::vector<int>& v,  SDL_Renderer* renderer, unsigned int red, unsigned int blue) {
+void draw(std::vector<int>& v, unsigned int red, unsigned int blue) {
     // Clear the Screen
     SDL_SetRenderDrawColor(renderer, 0,0,0,255);
     SDL_RenderClear(renderer);
@@ -35,7 +35,7 @@ void draw(std::vector<int>& v,  SDL_Renderer* renderer, unsigned int red, unsign
     SDL_RenderPresent(renderer);
 }
 
-void sort(std::vector<int>& v, SDL_Renderer* renderer) {
+void selection_sort_descending(std::vector<int>& v) {
      // Loop through V, checking if later values are smaller 
     for(unsigned int i = 0; i < v.size(); i++) {
         for(unsigned int j = i; j < v.size(); j++)
@@ -45,7 +45,23 @@ void sort(std::vector<int>& v, SDL_Renderer* renderer) {
             }
      
             // Draw Sort
-            draw(v, renderer, i, j);
+            draw(v, i, j);
+
+        }
+    }
+}
+
+void selection_sort_ascending(std::vector<int>& v) {
+     // Loop through V, checking if later values are smaller 
+    for(unsigned int i = 0; i < v.size(); i++) {
+        for(unsigned int j = i; j < v.size(); j++)
+        {
+            if(v[j] > v[i]) {
+                std::swap(v[j], v[i]);
+            }
+     
+            // Draw Sort
+            draw(v, i, j);
 
         }
     }
@@ -53,39 +69,127 @@ void sort(std::vector<int>& v, SDL_Renderer* renderer) {
 
 
 std::vector<int> get_randomized_vector() {
-    std::random_device rd;
-    std::uniform_int_distribution<> distrib(1,99);
     std::vector<int> v;
+
+    std::random_device rd; // obtain a random number from hardware
+    std::mt19937 rng_mt(std::time(nullptr)); 
+    std::uniform_int_distribution<> distr(1, 99); 
 
     // Push random numbers into Vector
     for(int i = 0; i < 100; i++) {
-        v.push_back(distrib(rd));
+        v.push_back(distr(rng_mt));
     }
     return v;
 }
 
+
+void controls()
+{
+    std::cout 
+         <<"    Use 0 to close the application \n"
+         <<"    Use 1 to start Selection Sort Algorithm.\n"
+         <<"    Use 2 to start Insertion Sort Algorithm.\n"
+         <<"    Use 3 to start Bubble Sort Algorithm.\n"
+         <<"    Use 4 to start Merge Sort Algorithm.\n"
+         <<"    Use 5 to start Quick Sort Algorithm.\n"
+         <<"    Use 6 to start Heap Sort Algorithm.\n"
+         <<"    Use q to exit out of Sorting Visualizer\n";
+         
+
+}
+
+void kill() {
+    SDL_DestroyRenderer(renderer);
+    renderer = NULL;
+
+    SDL_DestroyWindow(window);
+    window = NULL;
+
+    SDL_Quit();
+}
+
+bool execute(bool quit)
+{
+        SDL_Event e;
+        
+        while(!quit)
+        {
+            while(SDL_PollEvent(&e)!=0)
+            {
+                if(e.type==SDL_KEYDOWN)
+                    {
+                    
+                    std::vector<int> v;
+                    duration<double, std::milli> ms_double;
+                    system_clock::time_point t1;
+                    system_clock::time_point t2;
+
+                    switch(e.key.keysym.sym)
+                    {
+                        case(SDLK_0):
+                            quit=true;
+                            std::cout<<"\nEXITING SORTING VISUALIZER.\n";
+                            break;
+                        case(SDLK_1):
+                            v = get_randomized_vector();
+                            t1 = high_resolution_clock::now();
+                            selection_sort_descending(v);
+                            t2 = high_resolution_clock::now();
+                            ms_double = t2 - t1;
+                            std::cout << "Finished sorting in: " <<ms_double.count() << " ms\n";
+                                for(int i : v) {
+                                    std::cout << i << ", ";
+                                }
+                            break;
+
+                        case(SDLK_2):
+                            v = get_randomized_vector();
+                            t1 = high_resolution_clock::now();
+                            selection_sort_ascending(v);
+                            t2 = high_resolution_clock::now();
+                            ms_double = t2 - t1;
+                            std::cout << "Finished sorting in: " <<ms_double.count() << " ms\n";
+                           
+                    }
+                }
+            }
+           
+        }
+        
+        return quit;
+    }
+
+
 // int argc, char *argv[] - SDL required signatures - otherwise E: undefined reference to `SDL_main'
 int main( int argc, char *argv[] )
-{
+{ 
+    setup();
 
-    std::vector<int> v = get_randomized_vector();
-    SDL_Renderer* renderer = setup();
+    bool quit = false;
+    while(quit == false)
+    {
+        std::cout << "\n";
+        controls();
+        quit = execute(quit);
+
+    }
+    kill();
+    return 0;
+
     
-    auto t1 = high_resolution_clock::now();
-    sort(v, renderer);
-    auto t2 = high_resolution_clock::now();
-    duration<double, std::milli> ms_double = t2 - t1;
+    // auto t1 = high_resolution_clock::now();
+    // sort(v, renderer);
+    // auto t2 = high_resolution_clock::now();
+    // duration<double, std::milli> ms_double = t2 - t1;
     
 
 
     // Foreach loop to print out sorted values
-    for(int i :v) {
-        std::cout << i << "\n";
-    }
 
-    if(std::is_sorted(v.begin(), v.end())) {
-        std::cout << "Sorting finished!\n";
-    }
-    std::cout << ms_double.count() << "ms\n";
+
+    // if(std::is_sorted(v.begin(), v.end())) {
+    //     std::cout << "Sorting finished!\n";
+    // }
+    // std::cout << ms_double.count() << "ms\n";
 }
  
