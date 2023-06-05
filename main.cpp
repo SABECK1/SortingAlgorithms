@@ -52,7 +52,7 @@ void selection_sort_descending(std::vector<int>& v) {
 }
 
 void selection_sort_ascending(std::vector<int>& v) {
-     // Loop through V, checking if later values are smaller 
+     // Loop through V, checking if later values are larger 
     for(unsigned int i = 0; i < v.size(); i++) {
         for(unsigned int j = i; j < v.size(); j++)
         {
@@ -71,7 +71,7 @@ void selection_sort_ascending(std::vector<int>& v) {
 std::vector<int> get_randomized_vector() {
     std::vector<int> v;
 
-    std::random_device rd; // obtain a random number from hardware
+    // std::random_device rd; // obtain a random number from hardware
     std::mt19937 rng_mt(std::time(nullptr)); 
     std::uniform_int_distribution<> distr(1, 99); 
 
@@ -108,6 +108,22 @@ void kill() {
     SDL_Quit();
 }
 
+
+void time_run_algorithm(void (*algorithm)(std::vector<int>& v) ) {
+    std::vector<int> v;
+    duration<double, std::milli> ms_double;
+    system_clock::time_point t1;
+    system_clock::time_point t2;
+
+    v = get_randomized_vector();
+    t1 = high_resolution_clock::now();
+    algorithm(v);
+    t2 = high_resolution_clock::now();
+    ms_double = t2 - t1;
+    std::cout << "Finished sorting in: " <<ms_double.count() << " ms\n";
+}
+
+
 bool execute(bool quit)
 {
         SDL_Event e;
@@ -118,12 +134,6 @@ bool execute(bool quit)
             {
                 if(e.type==SDL_KEYDOWN)
                     {
-                    
-                    std::vector<int> v;
-                    duration<double, std::milli> ms_double;
-                    system_clock::time_point t1;
-                    system_clock::time_point t2;
-
                     switch(e.key.keysym.sym)
                     {
                         case(SDLK_0):
@@ -131,31 +141,19 @@ bool execute(bool quit)
                             std::cout<<"\nEXITING SORTING VISUALIZER.\n";
                             break;
                         case(SDLK_1):
-                            v = get_randomized_vector();
-                            t1 = high_resolution_clock::now();
-                            selection_sort_descending(v);
-                            t2 = high_resolution_clock::now();
-                            ms_double = t2 - t1;
-                            std::cout << "Finished sorting in: " <<ms_double.count() << " ms\n";
-                                for(int i : v) {
-                                    std::cout << i << ", ";
-                                }
+                            time_run_algorithm(selection_sort_descending);
                             break;
 
                         case(SDLK_2):
-                            v = get_randomized_vector();
-                            t1 = high_resolution_clock::now();
-                            selection_sort_ascending(v);
-                            t2 = high_resolution_clock::now();
-                            ms_double = t2 - t1;
-                            std::cout << "Finished sorting in: " <<ms_double.count() << " ms\n";
+                            time_run_algorithm(selection_sort_ascending);
+                            break;
                            
                     }
                 }
             }
            
         }
-        
+
         return quit;
     }
 
@@ -191,5 +189,9 @@ int main( int argc, char *argv[] )
     //     std::cout << "Sorting finished!\n";
     // }
     // std::cout << ms_double.count() << "ms\n";
+
+    //         for(int i : v) {
+    //     std::cout << i << ", ";
+    // }
 }
  
