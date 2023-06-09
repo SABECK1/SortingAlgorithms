@@ -3,15 +3,19 @@
 #include <algorithm>
 #include <SDL2/SDL.h>
 #include <chrono>
+#include <SDL2/SDL_Mixer.h>
+
+
 
 using namespace std::chrono;
 
 SDL_Window* window= nullptr;
 SDL_Renderer* renderer=nullptr;
 
-void setup() {
+int setup() {
     SDL_CreateWindowAndRenderer(100*10, 100*10, 0, &window, &renderer);
     SDL_RenderSetScale(renderer, 5 , 5);
+
 }
 
 void draw(std::vector<int>& v, unsigned int red, unsigned int blue) {
@@ -70,13 +74,11 @@ void selection_sort_ascending(std::vector<int>& v) {
 
 std::vector<int> get_randomized_vector() {
     std::vector<int> v;
-
-    // std::random_device rd; // obtain a random number from hardware
     std::mt19937 rng_mt(std::time(nullptr)); 
     std::uniform_int_distribution<> distr(1, 99); 
 
     // Push random numbers into Vector
-    for(int i = 0; i < 100; i++) {
+    for(int i = 0; i < 300; i++) {
         v.push_back(distr(rng_mt));
     }
     return v;
@@ -130,7 +132,7 @@ bool execute(bool quit)
         
         while(!quit)
         {
-            while(SDL_PollEvent(&e)!=0)
+            while(SDL_PollEvent(&e)) // DO NOT CHECK IF EVENT IS EMPTY - OTHERWISE EVENTLOOP WON'T WORK!L
             {
                 if(e.type==SDL_KEYDOWN)
                     {
@@ -150,6 +152,7 @@ bool execute(bool quit)
                            
                     }
                 }
+            
             }
            
         }
