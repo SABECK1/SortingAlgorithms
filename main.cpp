@@ -23,8 +23,8 @@ int setup()
     SDL_Init(SDL_INIT_AUDIO);
     int audio_rate = 44100;
     Uint16 audio_format = AUDIO_S16SYS;
-    int audio_channels = 2;
-    int audio_buffers = 4096;
+    int audio_channels = 4;
+    int audio_buffers = 0;
 
     if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0)
     {
