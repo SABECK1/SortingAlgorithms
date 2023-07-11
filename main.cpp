@@ -94,6 +94,42 @@ void selection_sort_ascending(std::vector<int> &v)
     }
 }
 
+void insertion_sort_ascending(std::vector<int> &v)
+{
+    for(unsigned int i = 1; i < v.size(); i++) {
+
+        unsigned int val = v[i];
+        unsigned int j = i;
+        
+        while (j > 0 and v[j-1] < val) {
+            SDL_Delay(50);
+            std::swap(v[j], v[j-1]);
+            j -= 1;
+            draw(v, i, j);
+        }
+        v[j] = val;
+        draw(v, i, j);
+        
+    }
+}
+void insertion_sort_descending(std::vector<int> &v)
+{
+    for(unsigned int i = 1; i < v.size(); i++) {
+
+        unsigned int val = v[i];
+        unsigned int j = i;
+
+        while (j > 0 and v[j-1] > val) {
+            std::swap(v[j], v[j-1]);
+            j -= 1;
+            draw(v, i, j);
+        }
+        v[j] = val;
+        draw(v, i, j);
+        
+    }
+}
+
 std::vector<int> get_randomized_vector()
 {
     std::vector<int> v;
@@ -101,7 +137,7 @@ std::vector<int> get_randomized_vector()
     std::uniform_int_distribution<> distr(1, 99);
 
     // Push random numbers into Vector
-    for (int i = 0; i <= 100; i++)
+    for (int i = 0; i <= 200; i++)
     {
         v.push_back(distr(rng_mt));
     }
@@ -172,11 +208,14 @@ int main(int argc, char *argv[])
                     std::cout << "\nEXITING SORTING VISUALIZER.\n";
                     break;
                 case (SDLK_1):
-                    time_run_algorithm(selection_sort_descending);
+                    time_run_algorithm(selection_sort_ascending);
                     break;
 
                 case (SDLK_2):
-                    time_run_algorithm(selection_sort_ascending);
+                    time_run_algorithm(selection_sort_descending);
+                    break;
+                case (SDLK_3):
+                    time_run_algorithm(insertion_sort_ascending);
                     break;
                 }
             }
