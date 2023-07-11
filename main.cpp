@@ -16,8 +16,8 @@ int setup()
 {
 
     //"VIDEO"
-    SDL_CreateWindowAndRenderer(100 * 10, 100 * 10, 0, &window, &renderer);
-    SDL_RenderSetScale(renderer, 10, 10);
+    SDL_CreateWindowAndRenderer(100 * 5, 100 * 5, 0, &window, &renderer);
+    SDL_RenderSetScale(renderer, 5, 5);
 
     // AUDIO
     SDL_Init(SDL_INIT_AUDIO);
@@ -102,7 +102,6 @@ void insertion_sort_ascending(std::vector<int> &v)
         unsigned int j = i;
         
         while (j > 0 and v[j-1] < val) {
-            SDL_Delay(50);
             std::swap(v[j], v[j-1]);
             j -= 1;
             draw(v, i, j);
@@ -216,6 +215,9 @@ int main(int argc, char *argv[])
                     break;
                 case (SDLK_3):
                     time_run_algorithm(insertion_sort_ascending);
+                    break;
+                case (SDLK_4):
+                    time_run_algorithm(insertion_sort_descending);
                     break;
                 }
             }
