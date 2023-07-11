@@ -137,7 +137,7 @@ std::vector<int> get_randomized_vector()
     std::uniform_int_distribution<> distr(1, 99);
 
     // Push random numbers into Vector
-    for (int i = 0; i <= 200; i++)
+    for (int i = 0; i <= 100; i++)
     {
         v.push_back(distr(rng_mt));
     }
