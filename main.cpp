@@ -11,7 +11,6 @@ SDL_Window *window = nullptr;
 SDL_Renderer *renderer = nullptr;
 Mix_Chunk *sound = nullptr;
 
-
 int setup()
 {
 
@@ -65,7 +64,7 @@ void selection_sort_descending(std::vector<int> &v)
         {
             if (v[j] < v[i])
             {
-                
+
                 std::swap(v[j], v[i]);
             }
             Mix_PlayChannel(1, sound, 0);
@@ -84,11 +83,10 @@ void selection_sort_ascending(std::vector<int> &v)
         {
             if (v[j] > v[i])
             {
-                
+
                 std::swap(v[j], v[i]);
             }
             Mix_PlayChannel(1, sound, 0);
-            // Draw Sort
             draw(v, i, j);
         }
     }
@@ -96,36 +94,92 @@ void selection_sort_ascending(std::vector<int> &v)
 
 void insertion_sort_ascending(std::vector<int> &v)
 {
-    for(unsigned int i = 1; i < v.size(); i++) {
+    for (unsigned int i = 1; i < v.size(); i++)
+    {
 
         unsigned int val = v[i];
         unsigned int j = i;
-        
-        while (j > 0 and v[j-1] < val) {
-            std::swap(v[j], v[j-1]);
+
+        while (j > 0 and v[j - 1] < val)
+        {
+            std::swap(v[j], v[j - 1]);
             j -= 1;
+            Mix_PlayChannel(1, sound, 0);
             draw(v, i, j);
         }
         v[j] = val;
+        Mix_PlayChannel(1, sound, 0);
         draw(v, i, j);
-        
     }
 }
 void insertion_sort_descending(std::vector<int> &v)
 {
-    for(unsigned int i = 1; i < v.size(); i++) {
+    for (unsigned int i = 1; i < v.size(); i++)
+    {
 
         unsigned int val = v[i];
         unsigned int j = i;
 
-        while (j > 0 and v[j-1] > val) {
-            std::swap(v[j], v[j-1]);
+        while (j > 0 and v[j - 1] > val)
+        {
+            std::swap(v[j], v[j - 1]);
             j -= 1;
+            Mix_PlayChannel(1, sound, 0);
             draw(v, i, j);
         }
         v[j] = val;
+        Mix_PlayChannel(1, sound, 0);
         draw(v, i, j);
-        
+    }
+}
+
+void bubble_sort_ascending(std::vector<int> &v)
+{
+    int i, j;
+    int n = v.size();
+    bool swapped;
+    for (i = 0; i < n - 1; i++)
+    {
+        swapped = false;
+        for (j = 0; j < n - i - 1; j++)
+        {
+            if (v[j] > v[j + 1])
+            {
+                std::swap(v[j], v[j + 1]);
+                swapped = true;
+                Mix_PlayChannel(1, sound, 0);
+                draw(v, i, j);
+            }
+        }
+
+        // If no elements were swapped, then the vector is in the correct order
+        if (swapped == false)
+            break;
+    }
+}
+
+void bubble_sort_descending(std::vector<int> &v)
+{
+    int i, j;
+    int n = v.size();
+    bool swapped;
+    for (i = 0; i < n - 1; i++)
+    {
+        swapped = false;
+        for (j = 0; j < n - i - 1; j++)
+        {
+            if (v[j] < v[j + 1])
+            {
+                std::swap(v[j], v[j + 1]);
+                swapped = true;
+                Mix_PlayChannel(1, sound, 0);
+                draw(v, i, j);
+            }
+        }
+
+        // If no elements were swapped, then the vector is in the correct order
+        if (swapped == false)
+            break;
     }
 }
 
@@ -147,6 +201,7 @@ void controls()
 {
     std::cout
         << "    Use 0 to close the application \n"
+        << "    Use R to reverse Sort Order \n"
         << "    Use 1 to start Selection Sort Algorithm.\n"
         << "    Use 2 to start Insertion Sort Algorithm.\n"
         << "    Use 3 to start Bubble Sort Algorithm.\n"
@@ -167,7 +222,7 @@ void kill()
     SDL_Quit();
 }
 
-void time_run_algorithm(void (*algorithm)(std::vector<int> &v) )
+void time_run_algorithm(void (*algorithm)(std::vector<int> &v))
 {
     std::vector<int> v;
     duration<double, std::milli> ms_double;
@@ -187,8 +242,9 @@ int main(int argc, char *argv[])
 {
     setup();
     sound = Mix_LoadWAV("./low.wav");
-    
+
     bool quit = false;
+    bool is_reverse = false;
 
     std::cout << "\n";
     controls();
@@ -200,25 +256,53 @@ int main(int argc, char *argv[])
         {
             if (e.type == SDL_KEYDOWN)
             {
-                switch (e.key.keysym.sym)
+                if (is_reverse == false)
                 {
-                case (SDLK_0):
-                    quit = true;
-                    std::cout << "\nEXITING SORTING VISUALIZER.\n";
-                    break;
-                case (SDLK_1):
-                    time_run_algorithm(selection_sort_ascending);
-                    break;
-
-                case (SDLK_2):
-                    time_run_algorithm(selection_sort_descending);
-                    break;
-                case (SDLK_3):
-                    time_run_algorithm(insertion_sort_ascending);
-                    break;
-                case (SDLK_4):
-                    time_run_algorithm(insertion_sort_descending);
-                    break;
+                    switch (e.key.keysym.sym)
+                    {
+                    case (SDLK_0):
+                        quit = true;
+                        std::cout << "\nEXITING SORTING VISUALIZER.\n";
+                        break;
+                    case (SDLK_1):
+                        time_run_algorithm(selection_sort_ascending);
+                        break;
+                    case (SDLK_2):
+                        time_run_algorithm(insertion_sort_ascending);
+                        break;
+                    case (SDLK_3):
+                        time_run_algorithm(bubble_sort_ascending);
+                        break;
+                    case (SDLK_r):
+                        is_reverse = true;
+                        std::cout << "Algorithms set to descending"
+                                  << "\n";
+                        break;
+                    }
+                }
+                else
+                {
+                    switch (e.key.keysym.sym)
+                    {
+                    case (SDLK_0):
+                        quit = true;
+                        std::cout << "\nEXITING SORTING VISUALIZER.\n";
+                        break;
+                    case (SDLK_1):
+                        time_run_algorithm(selection_sort_descending);
+                        break;
+                    case (SDLK_2):
+                        time_run_algorithm(insertion_sort_descending);
+                        break;
+                    case (SDLK_3):
+                        time_run_algorithm(bubble_sort_descending);
+                        break;
+                    case (SDLK_r):
+                        is_reverse = false;
+                        std::cout << "Algorithms set to ascending"
+                                  << "\n";
+                        break;
+                    }
                 }
             }
         }
